@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  web:
+    image: nginx:latest
+    ports:
+     - "80:80"
+    volumes:
+     - ./src:/src
+     - ./conf:/etc/nginx/conf.d
+    links:
+     - php
+     - mysqldb
+  php:
+    build:
+      context: ./conf
+      dockerfile: Dockerfilephp
+    image: php:7-fpm
+    volumes:
+      - ./src:/src
+  mysqldb:
+    platform: linux/x86_64
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=p@ssw0rd1
+    volumes:
+      - mysql:/var/lib/mysql
+      - mysql_config:/etc/mysql
+volumes:
+  mysql:
+  mysql_config:
