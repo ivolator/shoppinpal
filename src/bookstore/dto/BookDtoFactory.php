@@ -17,11 +17,11 @@ class BookDtoFactory
     public static function create(array $book): BookDto
     {
         $bookDto = new BookDto();
-        $bookDto->setId($book['id']?:0);
-        $bookDto->setTitle($book['title']?:'');
-        $bookDto->setReleaseDate($book['release_date']?:'');
-        $bookDto->setIsbn($book['isbn']?:'');
-        $bookDto->setAuthor($book['author']?:'');
+        $bookDto->setId($book['id'] ?? 0);
+        $bookDto->setTitle($book['title'] ?? '');
+        $bookDto->setReleaseDate($book['releaseDate'] ?? '');
+        $bookDto->setIsbn($book['isbn'] ?? '');
+        $bookDto->setAuthor($book['author'] ?? '');
         return $bookDto;
     }
 

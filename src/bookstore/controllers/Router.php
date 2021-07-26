@@ -4,6 +4,7 @@
 namespace bookstore\controllers;
 
 
+use bookstore\services\Request;
 use bookstore\services\Response;
 use bookstore\services\JsonOutput;
 
@@ -17,24 +18,20 @@ class Router
     /**
      * @throws \Exception
      */
-    public function route(string $method, BookController $controller, $request): void
+    public function route(string $method, BookController $controller,Request $request)
     {
 
         switch ($method) {
             case 'POST' :
-                echo $method;
-                //        echo $controller->createBooks($book);
                 break;
             case 'GET':
                 $ids = $request->get('ids', '');
-                $books = $controller->getBooks($ids);
-                //encapsulate data in generic response
-                echo (new JsonOutput())->convertToJson($books);
-                //send
-                break;
+                $books = $controller->getBooks($ids?:[]);
+                return (new JsonOutput())->convertToJson($books);
             case 'DELETE':
-                echo 'PUT';
-                break;
+                $ids = $request->get('ids', '');
+                $result = $controller->deleteBooks($ids?:[]);
+                return (new JsonOutput())->convertToJson($result);
             case 'PUT' :
                 echo 'PUT';
 

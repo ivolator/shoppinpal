@@ -24,36 +24,62 @@ class BookDataAccess
     }
 
     /**
+     * Not sure if this is required
+     * Fetch list of books by  ISBN
+     * Returnns an associative array of arrays
+     * @param array $isbns
+     * @return array
+     */
+    public function getBookByIsbns(array $isbns): array
+    {
+        $in = str_repeat('?,', count($isbns) - 1) . '?';
+        $sql = 'SELECT b.id, a.name as author, b.title, b.isbn, b.release_date as releaseDate' .
+            ' FROM books b LEFT JOIN' .
+            ' authors a ON b.author_id=a.id where b.isbn IN (' . $in . ')';
+
+        $stm = $this->connection->prepare($sql);
+        if (!empty($stm)) {
+            $stm->execute($isbns);
+        }
+        return $stm->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Fetch list of books by ids
+     * Returnns an associative array of arrays
      * @param array $ids
      * @return array
-     * @throws Exception400
      */
     public function getBookByIds(array $ids): array
     {
         $in = str_repeat('?,', count($ids) - 1) . '?';
-        $sql = 'SELECT b.id, a.name as author, b.title, b.isbn, b.release_date'.
+        $sql = 'SELECT b.id, a.name as author, b.title, b.isbn, b.release_date as releaseDate' .
             ' FROM books b LEFT JOIN' .
             ' authors a ON b.author_id=a.id where b.id IN (' . $in . ')';
 
         $stm = $this->connection->prepare($sql);
-        $stm->execute($ids);
+        if (!empty($stm)) {
+            $stm->execute($ids);
+        }
         return $stm->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
      * @param int $id
-     * @return bool
+     * @return int
+     * @throws Exception400
      */
-    public function deleteById(int $id): bool
+    public function deleteById(array $ids): int
     {
-        $query = 'DELETE FROM books WHERE id =: id';
-        $prep = $this->connection->prepare($query);
-        if ($prep) {
-            $prep->execute(['id' => $id]);
+        $in = str_repeat('?,', count($ids) - 1) . '?';
+        $query = 'DELETE FROM books WHERE id in (' . $in . ')';
+        $stm = $this->connection->prepare($query);
+        if (!empty($stm)) {
+            $stm->execute($ids);
+           return $stm->rowCount();
         }
-        return true;
-    }
 
+        return 0;
+    }
 
 }

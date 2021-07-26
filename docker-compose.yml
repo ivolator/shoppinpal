@@ -6,7 +6,7 @@ services:
      - "80:80"
     volumes:
      - ./src:/src
-     - ./conf:/etc/nginx/conf.d
+     - ./conf/nginx:/etc/nginx/conf.d
     links:
      - php
      - mysqldb

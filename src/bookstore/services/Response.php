@@ -121,11 +121,6 @@ class Response
     protected Result $resultObject;
 
 
-    public function __construct()
-    {
-//        register_shutdown_function([$this, 'shutdown']);
-    }
-
     /**
      * (non-PHPdoc)
      *

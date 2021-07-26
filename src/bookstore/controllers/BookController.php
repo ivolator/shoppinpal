@@ -17,20 +17,52 @@ class BookController
 {
 
     protected BookRepository $bookRepository;
+    protected Response $response;
 
-    public function __construct(BookRepository $bookRepository)
+    public function __construct(BookRepository $bookRepository, Response $response)
     {
+        $this->response = $response?:(new Response());
         $this->bookRepository = $bookRepository;
     }
 
     /**
-     *
-     * @throws Exception
+     * Executed upon GET request with array of ids passed in the query string
+     * The resource is at the root of the application
+     * ids[]=1&ids[]=2&ids[]=3
      */
     public function getBooks(array $ids)
     {
         try {
+            if (empty($ids)){
+                throw new Exception400('No ids were provided');
+            }
             $books = $this->bookRepository->findBooksByIds($ids);
+            $data = $this->response->setResultObject(new Result())->send($books);
+            return $data;
+        } catch (Exception400 $e400) {
+            return $this->response->setResultObject(new Result())->shutdown($e400);
+        } catch (Exception500 | Exception $e500) {
+            return $this->response->setResultObject(new Result())->shutdown($e500);
+        }
+    }
+
+    /**
+     * Executed upon DELETE
+     * Use a POST method with
+     *   X-HTTP-METHOD-OVERRIDE header for DELETE
+     * ids[]=1&ids[]=2&ids[]=3
+     * The  "data" property in the response object is set to true on success for any found book deletions,
+     * 404 when no books found, 500 if something goes wrong.
+     *
+     * @param array $ids
+     * @return Result
+     */
+    public function deleteBooks(array $ids){
+        try {
+            if (empty($ids)){
+                throw new Exception400('No ids were provided');
+            }
+            $books = $this->bookRepository->deleteBookById($ids);
             $data = (new Response())->setResultObject(new Result())->send($books);
             return $data;
         } catch (Exception400 $e400) {
@@ -39,4 +71,38 @@ class BookController
             return (new Response())->setResultObject(new Result())->shutdown($e500);
         }
     }
+
+    /**
+     * @return BookRepository
+     */
+    public function getBookRepository(): BookRepository
+    {
+        return $this->bookRepository;
+    }
+
+    /**
+     * @param BookRepository $bookRepository
+     */
+    public function setBookRepository(BookRepository $bookRepository): void
+    {
+        $this->bookRepository = $bookRepository;
+    }
+
+    /**
+     * @return Response
+     */
+    public function getResponse(): Response
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function setResponse(Response $response): void
+    {
+        $this->response = $response;
+    }
+
+
 }

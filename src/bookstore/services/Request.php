@@ -2,6 +2,8 @@
 
 namespace bookstore\services;
 
+use Exception;
+
 /**
  * Class Request
  * Deal with request parsing
@@ -153,7 +155,7 @@ class Request
      */
     public function getUri()
     {
-        if (!$this->uri) {
+        if (!isset($this->uri)) {
             $res = parse_url('/' . trim($_SERVER ['REQUEST_URI'], '/'));
             $this->uri = $res ['path'] ? $res ['path'] : '/';
             $this->uri = str_replace('//', '/', $this->uri);
@@ -167,11 +169,13 @@ class Request
      */
     public function getMethod(): string
     {
+
         if (!$this->method) {
-            $this->method = !empty ($_SERVER ['X-HTTP-METHOD-OVERRIDE']) ? $_SERVER ['X-HTTP-METHOD-OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
+            $this->method = !empty ($_SERVER ['HTTP_X_HTTP_METHOD_OVERRIDE']) ? $_SERVER ['HTTP_X_HTTP_METHOD_OVERRIDE'] : $_SERVER ['REQUEST_METHOD'];
         }
+
         if (!in_array($this->method, [Request::POST, Request::GET, Request::PUT, Request::DELETE, Request::PATCH, Request::HEAD])) {
-            throw new ServerException ('Invalid Method', Response::METHODNOTALLOWED);
+            throw new Exception('Invalid Method', Response::METHODNOTALLOWED);
         }
         return strtoupper($this->method);
     }
@@ -190,25 +194,5 @@ class Request
         }
         return $this->contentType;
     }
-
-    public function __toString()
-    {
-        $get = print_r($this->queryParams, true);
-        $post = print_r($this->postParams, true);
-        $rawPost = print_r($this->rawPost, true);
-        $headers = print_r($this->headers, true);
-        $ret = 'Headers : ' . PHP_EOL . $headers . PHP_EOL;
-        if ($this->queryParams) {
-            $ret .= 'GET     : ' . PHP_EOL . $get . PHP_EOL;
-        }
-        if ($this->postParams) {
-            $ret .= 'POST    : ' . PHP_EOL . $post . PHP_EOL;
-        }
-        if ($this->rawPost) {
-            $ret .= 'Raw     : ' . PHP_EOL . $rawPost . PHP_EOL;
-        }
-        return $ret;
-    }
-
 
 }

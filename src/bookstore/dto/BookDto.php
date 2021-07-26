@@ -52,6 +52,9 @@ class BookDto implements JsonSerializable
      */
     public function setId(int $id): void
     {
+        if (empty($id)) {
+            throw new Exception400("Book ID can't be empty or 0");
+        }
         $this->id = $id;
     }
 
@@ -69,7 +72,7 @@ class BookDto implements JsonSerializable
      */
     public function setAuthor(string $author): void
     {
-        if (empty($author)){
+        if (empty($author) or strlen($author) === 0) {
             throw new Exception400("Missing book Author name");
         }
         $this->author = $author;
@@ -89,7 +92,7 @@ class BookDto implements JsonSerializable
      */
     public function setTitle(string $title): void
     {
-        if (empty($title)){
+        if (empty($title) or strlen($title) === 0) {
             throw new Exception400("Missing book Title name");
         }
         $this->title = $title;
@@ -109,7 +112,7 @@ class BookDto implements JsonSerializable
      */
     public function setIsbn(string $isbn): void
     {
-        if (empty($isbn)){
+        if (empty($isbn) or strlen($isbn) == 0) {
             throw new Exception400("Missing ISBN value");
         }
         $this->isbn = $isbn;
@@ -125,10 +128,16 @@ class BookDto implements JsonSerializable
 
     /**
      * @param string $releaseDate
+     * @throws Exception400
      */
     public function setReleaseDate(string $releaseDate): void
     {
-        $this->releaseDate = $releaseDate;
+        $match = preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $releaseDate, $matches);
+        if ($match > 0) {
+            $this->releaseDate = $releaseDate;
+        } else {
+            throw new Exception400("Invalid date format. Use MySQL format");
+        }
     }
 
     /**
