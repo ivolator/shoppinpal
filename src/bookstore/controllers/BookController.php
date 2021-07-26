@@ -37,8 +37,7 @@ class BookController
                 throw new Exception400('No ids were provided');
             }
             $books = $this->bookRepository->findBooksByIds($ids);
-            $data = $this->response->setResultObject(new Result())->send($books);
-            return $data;
+            return $this->response->setResultObject(new Result())->send($books);
         } catch (Exception400 $e400) {
             return $this->response->setResultObject(new Result())->shutdown($e400);
         } catch (Exception500 | Exception $e500) {

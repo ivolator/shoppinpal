@@ -21,7 +21,6 @@ class RouterTest extends TestCase
 
         $controller = $this->getMockBuilder(BookController::class)->disableOriginalConstructor()->getMock();
         $controller->expects(self::once())->method('getBooks')->willReturn([$book]);
-//        $controller->method('deleteBooks')->with($book)->willReturn((new Result())->setData(true));
 
         $request = $this->getMockBuilder(Request::class)->getMock();
         $request->expects(self::once())->method('get')->willReturn([1, 2, 3, 4]);

@@ -4,6 +4,7 @@ namespace bookstore\services;
 
 use bookstore\controllers\Result;
 use Exception;
+
 /**
  * @see github ivolator/restlt
  * This file was modified from the original.
@@ -120,6 +121,25 @@ class Response
      */
     protected Result $resultObject;
 
+    /**
+     *
+     * @return Result $reultObject
+     */
+    public function getResultObject()
+    {
+        return $this->resultObject;
+    }
+
+    /**
+     *
+     * @param Result $result
+     * @return Response
+     */
+    public function setResultObject(Result $result): Response
+    {
+        $this->resultObject = $result;
+        return $this;
+    }
 
     /**
      * (non-PHPdoc)
@@ -128,7 +148,6 @@ class Response
      */
     public function send($data)
     {
-
         $contentType = self::APPLICATION_JSON;
         $this->addHeader('Content-Type', $contentType);
         return $this->_send($data);
@@ -181,26 +200,6 @@ class Response
                 header($hStr, true, $this->status);
             }
         }
-    }
-
-    /**
-     *
-     * @return Result $reultObject
-     */
-    public function getResultObject()
-    {
-        return $this->resultObject;
-    }
-
-    /**
-     *
-     * @param Result $reslt
-     * @return Response
-     */
-    public function setResultObject(Result $reslt): Response
-    {
-        $this->resultObject = $reslt;
-        return $this;
     }
 
     /**
@@ -267,7 +266,7 @@ class Response
 
         if ($e) {
             $this->displayError = $e;
-            $this->setStatus($e->getCode()?:self::INTERNALSERVERERROR);
+            $this->setStatus($e->getCode() ?: self::INTERNALSERVERERROR);
         } else {
             $this->setStatus(self::INTERNALSERVERERROR);
             $this->displayError = new Exception('Internal Server Error', Response::INTERNALSERVERERROR);
