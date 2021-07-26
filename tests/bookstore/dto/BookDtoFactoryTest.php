@@ -14,7 +14,7 @@ class BookDtoFactoryTest extends TestCase
      */
     public function testCreate($book)
     {
-        $dto = BookDtoFactory::create($book);
+        $dto = (new BookDtoFactory())->create($book);
         $this->assertEquals($book['id'], $dto->getId());
         $this->assertEquals($book['title'], $dto->getTitle());
         $this->assertEquals($book['releaseDate'], $dto->getReleaseDate());
@@ -36,7 +36,7 @@ class BookDtoFactoryTest extends TestCase
     public function testCreateFailForEach($book, $expectedExceptionMessage)
     {
         try {
-            $dto = BookDtoFactory::create($book);
+            $dto = (new BookDtoFactory())->create($book);
             $this->assertEquals($book['id'], $dto->getId());
         } catch (Exception400 $e) {
             $this->assertEquals($expectedExceptionMessage, $e->getMessage());

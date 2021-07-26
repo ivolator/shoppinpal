@@ -132,6 +132,9 @@ class BookDto implements JsonSerializable
      */
     public function setReleaseDate(string $releaseDate): void
     {
+        if(empty($releaseDate)){
+           return;
+        }
         $match = preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $releaseDate, $matches);
         if ($match > 0) {
             $this->releaseDate = $releaseDate;

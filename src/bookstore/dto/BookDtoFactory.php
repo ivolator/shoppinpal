@@ -14,7 +14,7 @@ class BookDtoFactory
      * @return BookDto
      * @throws \bookstore\exceptions\Exception400
      */
-    public static function create(array $book): BookDto
+    public function create(array $book): BookDto
     {
         $bookDto = new BookDto();
         $bookDto->setId($book['id'] ?? 0);

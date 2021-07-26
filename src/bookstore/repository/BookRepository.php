@@ -21,12 +21,18 @@ class BookRepository
     protected BookDataAccess $dataAccess;
 
     /**
+     * @var BookDtoFactory
+     */
+    protected BookDtoFactory $bookFactory;
+
+    /**
      * BookRepository constructor.
      * @param BookDataAccess $dataAccess
      */
-    public function __construct(BookDataAccess $dataAccess)
+    public function __construct(BookDataAccess $dataAccess, BookDtoFactory $bookDtoFactory)
     {
         $this->dataAccess = $dataAccess;
+        $this->bookFactory = $bookDtoFactory;
     }
 
     /**
@@ -45,7 +51,7 @@ class BookRepository
         }
 
         foreach ($books as $book) {
-            $ret[] = BookDtoFactory::create($book);
+            $ret[] = $this->bookFactory->create($book);
         }
 
         return $ret;
