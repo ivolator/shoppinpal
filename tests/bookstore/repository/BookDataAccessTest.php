@@ -30,10 +30,33 @@ class BookDataAccessTest extends TestCase
     public function testCreateBookExists()
     {
         $ret = [1, 'name', 'isbn', 'title'];
-        $bookDataAccess = $this->getMockBuilder(BookDataAccess::class)->disableOriginalConstructor()->getMock();
-        $bookDataAccess->method('getBookByIsbns')->willReturn($ret);
-        $bookDataAccess->expects(self::never())->method('getBookByIsbns');
+        $bookDataAccess = $this->getMockBuilder(BookDataAccess::class)->onlyMethods(['getBookByIsbns'])->disableOriginalConstructor()->getMock();
+        $bookDataAccess->method('getBookByIsbns')->willReturn([$ret]);
+        $bookDataAccess->expects(self::once())->method('getBookByIsbns');
         $bookDataAccess->createBook(['somedata']);
+    }
+
+    /**
+     * Test happy path
+     * @throws Exception500
+     */
+    public function testCreateBookNew()
+    {
+        $sqlInsertBook = 'INSERT INTO books (author_id, title, release_date, isbn ) VALUES (?,?,?,?)';
+
+        $bookDataAccess = $this->getMockBuilder(BookDataAccess::class)->onlyMethods(['getBookByIsbns', 'createAuthor', 'getConnection'])->disableOriginalConstructor()->getMock();
+
+        $this->pdoStatement->expects(self::once())->method('execute')->with([1, 'T', '1999-01-01', 'isbn']);//use same array as args
+        $this->pdo->expects(self::once())->method('prepare')->with($sqlInsertBook)->willReturn($this->pdoStatement);
+
+        $ret = ['id' => 1, 'isbn' => 'isbn', 'title' => 'T', 'author' => 1, 'releaseDate' => '1999-01-01'];
+
+        $bookDataAccess->expects(self::once())->method('getBookByIsbns')->willReturn([]);
+        $bookDataAccess->expects(self::once())->method('getBookByIsbns')->willReturn([$ret]);
+        $bookDataAccess->expects(self::once())->method('createAuthor')->willReturn(1);
+        $bookDataAccess->expects(self::once())->method('getConnection')->willReturn($this->pdo);
+
+        $bookDataAccess->createBook($ret);
     }
 
     /**

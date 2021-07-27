@@ -28,8 +28,16 @@ class BookDataAccess
     }
 
     /**
+     * @return PDO
+     */
+    public function getConnection(): PDO
+    {
+        return $this->connection;
+    }
+
+    /**
      * @param array $book
-     * @return bool
+     * @return array
      * @throws Exception500
      */
     public function createBook(array $book): array
@@ -37,19 +45,20 @@ class BookDataAccess
         //return the record if exists
         $books = $this->getBookByIsbns([$book['isbn'] ?? null]);
         if (count($books) > 0) {
-            return $books[0];
+            return $books;
         }
 
-        $author_id = $this->createAuthor($book['author']);
+        $author_id = $this->createAuthor($book['author']??'');
 
         $args[] = $author_id ?? null;
         $args[] = $book['title'] ?? null;
         $args[] = $book['releaseDate'] ?? null;
         $args[] = $book['isbn'] ?? null;
+
         try {
-            $sqlInsertBook = 'INSERT INTO books (author_id, title, release_date, isbn )' .
-                'VALUES (?,?,?,?)';
-            $ret = $this->connection->prepare($sqlInsertBook)->execute($args);
+            $sqlInsertBook = 'INSERT INTO books (author_id, title, release_date, isbn ) VALUES (?,?,?,?)';
+            $ret = $this->getConnection()->prepare($sqlInsertBook)->execute($args);
+
             if ($ret) { // return record if created
                 $books = $this->getBookByIsbns([$book['isbn'] ?? null]);
                 if (count($books) > 0) {
@@ -59,6 +68,7 @@ class BookDataAccess
         } catch (Throwable $t) {
             throw new Exception500('The book was not created', Response::INTERNALSERVERERROR);
         }
+        return  [];
     }
 
     /**
@@ -78,8 +88,9 @@ class BookDataAccess
         $stm = $this->connection->prepare($sql);
         if (!empty($stm)) {
             $stm->execute($isbns);
+            return $stm->fetchAll(PDO::FETCH_ASSOC);
         }
-        return $stm->fetchAll(PDO::FETCH_ASSOC);
+        return [];
     }
 
     /**
