@@ -3,6 +3,7 @@
 
 namespace bookstore\controllers;
 
+use bookstore\dto\BookDtoFactory;
 use bookstore\dto\Result;
 use bookstore\exceptions\Exception400;
 use bookstore\exceptions\Exception500;
@@ -16,14 +17,27 @@ use Exception;
  */
 class BookController
 {
-
     protected BookRepository $bookRepository;
     protected Response $response;
+    protected BookDtoFactory $bookDtoFactory;
 
-    public function __construct(BookRepository $bookRepository, Response $response)
+    public function __construct(BookRepository $bookRepository, Response $response, BookDtoFactory $bookDtoFactory)
     {
         $this->response = $response ?: (new Response());
         $this->bookRepository = $bookRepository;
+        $this->bookDtoFactory = $bookDtoFactory;
+    }
+
+
+    /**
+     * @param array $book
+     * @return int
+     * @throws Exception400
+     */
+    public function createBook(array $book): int
+    {
+        $bookDto = $this->bookDtoFactory->create($book);
+        return $this->bookRepository->createBook($bookDto);
     }
 
     /**
@@ -105,5 +119,12 @@ class BookController
         $this->response = $response;
     }
 
-
+    /**
+     * @param BookDtoFactory $bookDtoFactory
+     */
+    public function setBookDtoFactory(BookDtoFactory $bookDtoFactory): self
+    {
+        $this->bookDtoFactory = $bookDtoFactory;
+        return $this;
+    }
 }

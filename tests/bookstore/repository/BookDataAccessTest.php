@@ -58,6 +58,7 @@ class BookDataAccessTest extends TestCase
 
     /**
      * No ids were passed
+     * @throws \bookstore\exceptions\Exception400
      */
     public function testDeleteByIdNoArgs()
     {

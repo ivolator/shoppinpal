@@ -4,7 +4,6 @@
 namespace bookstore\repository;
 
 
-use mysqli;
 use PDO;
 
 /**
@@ -14,6 +13,19 @@ use PDO;
 class Connection
 {
     protected static $connection;
+
+    protected $db;
+    protected $host;
+    protected $username;
+    protected $password;
+
+    public function __construct($db, $host, $username, $password)
+    {
+        $this->db = $db;
+        $this->host = $host;
+        $this->username = $username;
+        $this->password = $password;
+    }
 
     /**
      * Needs to have arguments passed for DB connection instead of hardcoding them
@@ -27,7 +39,8 @@ class Connection
             return self::$connection;
         }
 
-        self::$connection = new PDO('mysql:dbname=bookstore;host=mysqldb', 'root', 'p@ssw0rd1');
+        $dsn = 'mysql:dbname=' . $this->db . ';host=' . $this->host;
+        self::$connection = new PDO($dsn, $this->username, $this->password);
 
         return self::$connection;
     }

@@ -15,32 +15,19 @@ class BookDtoFactory
 {
     /**
      * Create a DTO from an assoc array
-     * @param Book $book
+     * @param array $book
      * @return BookDto
      * @throws Exception400
      */
     public function create(array $book): BookDto
     {
         $bookDto = new BookDto();
-        $bookDto->setId($this->checkId($book['id'] ?? '') ? $book['id'] : 0);
+        $bookDto->setId($book['id'] ?? 0);
         $bookDto->setTitle($this->checkTitle($book['title']??'') ? $book['title'] : '');
         $bookDto->setIsbn($this->checkIsbn($book['isbn']??'') ? $book['isbn'] : '');
         $bookDto->setAuthor($this->checkAuthor($book['author']??'') ? $book['author'] : '');
         $bookDto->setReleaseDate($this->checkReleaseDate($book['releaseDate']??'') ? $book['releaseDate'] : "");
         return $bookDto;
-    }
-
-    /**
-     * @param $id
-     * @return bool
-     * @throws Exception400
-     */
-    protected function checkId($id): bool
-    {
-        if (empty($id)) {
-            throw new Exception400("Book ID can't be empty or 0");
-        }
-        return true;
     }
 
     /**

@@ -4,6 +4,7 @@
 namespace bookstore\repository;
 
 
+use bookstore\dto\BookDto;
 use bookstore\dto\BookDtoFactory;
 use bookstore\exceptions\Exception400;
 use bookstore\services\Response;
@@ -33,6 +34,14 @@ class BookRepository
     {
         $this->dataAccess = $dataAccess;
         $this->bookFactory = $bookDtoFactory;
+    }
+
+    /**
+     * @param BookDto $bookDto
+     * @return int
+     */
+    public function createBook(BookDto $bookDto): int{
+        return $this->dataAccess->createBook($bookDto->jsonSerialize());
     }
 
     /**
