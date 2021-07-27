@@ -1,5 +1,5 @@
 language: php
 php:
-  - "7.4"
+  - "7.4.2"
 script:
   - phpunit tests
