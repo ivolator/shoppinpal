@@ -2,4 +2,4 @@ language: php
 php:
   - "7.4.2"
 script:
-  - phpunit tests
+  - phpunit --bootstrap src/class_loader.php tests
