@@ -52,6 +52,9 @@ class BookDataAccess
      */
     public function getBookByIds(array $ids): array
     {
+        if (count($ids) == 0) {
+            return [];
+        }
         $in = str_repeat('?,', count($ids) - 1) . '?';
         $sql = 'SELECT b.id, a.name as author, b.title, b.isbn, b.release_date as releaseDate' .
             ' FROM books b LEFT JOIN' .
@@ -71,6 +74,9 @@ class BookDataAccess
      */
     public function deleteById(array $ids): int
     {
+        if (count($ids) == 0) {
+            return 0;
+        }
         $in = str_repeat('?,', count($ids) - 1) . '?';
         $query = 'DELETE FROM books WHERE id in (' . $in . ')';
         $stm = $this->connection->prepare($query);

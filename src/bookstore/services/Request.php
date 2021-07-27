@@ -41,13 +41,7 @@ class Request
      */
     protected string $rawPost;
 
-    /**
-     *
-     * @var string
-     */
-    protected string $uri;
-
-    /**
+     /**
      *
      * @var string
      */
@@ -66,6 +60,7 @@ class Request
     protected string $contentType;
 
     /**
+     * Request constructor.
      */
     public function __construct()
     {
@@ -147,20 +142,6 @@ class Request
     public function getHeaders()
     {
         return $this->headers;
-    }
-
-    /**
-     *
-     * @return the $url
-     */
-    public function getUri()
-    {
-        if (!isset($this->uri)) {
-            $res = parse_url('/' . trim($_SERVER ['REQUEST_URI'], '/'));
-            $this->uri = $res ['path'] ? $res ['path'] : '/';
-            $this->uri = str_replace('//', '/', $this->uri);
-        }
-        return $this->uri;
     }
 
     /**
