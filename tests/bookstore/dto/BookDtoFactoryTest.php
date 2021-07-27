@@ -50,7 +50,6 @@ class BookDtoFactoryTest extends TestCase
     public function jsonFailureDataProvider()
     {
         return [
-            [['title' => 'T1', 'releaseDate' => '2001-01-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Book ID can\'t be empty or 0'],//missing id
             [['id' => 1, 'releaseDate' => '2001-01-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Missing book Title name'],//missing title
             [['id' => 1, 'title' => 'T1', 'releaseDate' => '20-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Invalid date format. Use MySQL format'],//wrong date
             [['id' => 1, 'title' => 'T1', 'releaseDate' => '2001-01-01', 'isbn' => 'Isbn1234'], 'Missing book Author name'],//no author

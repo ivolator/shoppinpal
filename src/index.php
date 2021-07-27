@@ -13,6 +13,7 @@ use bookstore\services\Request;
 use bookstore\services\Response;
 
 require_once './class_loader.php';
+$conf=[];
 include_once './config.php';
 
 $request = new Request();

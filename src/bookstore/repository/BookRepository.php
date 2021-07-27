@@ -7,6 +7,7 @@ namespace bookstore\repository;
 use bookstore\dto\BookDto;
 use bookstore\dto\BookDtoFactory;
 use bookstore\exceptions\Exception400;
+use bookstore\exceptions\Exception500;
 use bookstore\services\Response;
 
 /**
@@ -38,9 +39,11 @@ class BookRepository
 
     /**
      * @param BookDto $bookDto
-     * @return int
+     * @return array
+     * @throws Exception500
      */
-    public function createBook(BookDto $bookDto): int{
+    public function createBook(BookDto $bookDto): array
+    {
         return $this->dataAccess->createBook($bookDto->jsonSerialize());
     }
 

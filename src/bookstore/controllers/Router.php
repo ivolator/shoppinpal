@@ -23,12 +23,11 @@ class Router
     {
         switch ($method) {
             case 'POST' :
-//                var_dump(file_get_contents('php://input', 'r'));
                 //assuming application/json headers
-                $book = json_decode(file_get_contents('php://input', 'r'));
+                $book = json_decode($request->getRawPost());
                 if (JSON_ERROR_NONE == json_last_error()) {
-                    $bookId = $controller->createBook((array) $book);
-                    return (new JsonOutput())->convertToJson($bookId);
+                    $response = $controller->createBook((array) $book);
+                    return (new JsonOutput())->convertToJson($response);
                 }
                 return (new JsonOutput())->convertToJson((new Result())->addError('There was an issue with the JSON payload', 404));
             case 'GET':

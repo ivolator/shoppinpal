@@ -5,8 +5,11 @@ namespace bookstore\repository;
 
 
 use bookstore\exceptions\Exception400;
+use bookstore\exceptions\Exception500;
+use bookstore\services\Response;
 use PDO;
 use PDOException;
+use Throwable;
 
 class BookDataAccess
 {
@@ -25,54 +28,37 @@ class BookDataAccess
     }
 
     /**
-     * Create books from assoc array of arrays
      * @param array $book
      * @return bool
+     * @throws Exception500
      */
-    public function createBook(array $book): bool
+    public function createBook(array $book): array
     {
+        //return the record if exists
+        $books = $this->getBookByIsbns([$book['isbn'] ?? null]);
+        if (count($books) > 0) {
+            return $books[0];
+        }
+
         $author_id = $this->createAuthor($book['author']);
 
         $args[] = $author_id ?? null;
         $args[] = $book['title'] ?? null;
         $args[] = $book['releaseDate'] ?? null;
         $args[] = $book['isbn'] ?? null;
-
-        $sqlInsertBook = 'INSERT INTO books (author_id, title, isbn, release_date)' .
-            'VALUES (?,?,?,?)';
-        $this->connection->prepare($sqlInsertBook)->execute($args);
-        return true;
-    }
-
-    /**
-     * @param string $author
-     * @return array
-     */
-    public function createAuthor(string $author): int
-    {
-        $sqlInsertBook = 'INSERT INTO authors (name) VALUES (?)';
         try {
-            $this->connection->prepare($sqlInsertBook)->execute([$author]);
-        } catch (PDOException $e) {
-            if ($e->errorInfo[1] != 1062) {
-                throw $e;//some other error
+            $sqlInsertBook = 'INSERT INTO books (author_id, title, release_date, isbn )' .
+                'VALUES (?,?,?,?)';
+            $ret = $this->connection->prepare($sqlInsertBook)->execute($args);
+            if ($ret) { // return record if created
+                $books = $this->getBookByIsbns([$book['isbn'] ?? null]);
+                if (count($books) > 0) {
+                    return $books[0];
+                }
             }
+        } catch (Throwable $t) {
+            throw new Exception500('The book was not created', Response::INTERNALSERVERERROR);
         }
-        return $this->getAuthorId($author);;
-    }
-
-    /**
-     * @param string $authorName
-     * @return mixed
-     */
-    protected function getAuthorId(string $authorName)
-    {
-        $sqlSelect = 'SELECT id FROM authors WHERE name = ?';
-        $stm = $this->connection->prepare($sqlSelect);
-        if (!empty($stm)) {
-            $stm->execute([$authorName]);
-        }
-        return $stm->fetchColumn();
     }
 
     /**
@@ -94,6 +80,37 @@ class BookDataAccess
             $stm->execute($isbns);
         }
         return $stm->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @param string $author
+     * @return array
+     */
+    public function createAuthor(string $author): int
+    {
+        $sqlInsertBook = 'INSERT INTO authors (name) VALUES (?)';
+        try {
+            $this->connection->prepare($sqlInsertBook)->execute([$author]);
+        } catch (PDOException $e) {
+            if ($e->errorInfo[1] != 1062) {
+                throw $e;//some other error
+            }
+        }
+        return $this->getAuthorId($author);
+    }
+
+    /**
+     * @param string $authorName
+     * @return mixed
+     */
+    protected function getAuthorId(string $authorName)
+    {
+        $sqlSelect = 'SELECT id FROM authors WHERE name = ?';
+        $stm = $this->connection->prepare($sqlSelect);
+        if (!empty($stm)) {
+            $stm->execute([$authorName]);
+        }
+        return $stm->fetchColumn();
     }
 
     /**

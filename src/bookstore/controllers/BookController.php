@@ -31,13 +31,15 @@ class BookController
 
     /**
      * @param array $book
-     * @return int
+     * @return Result
      * @throws Exception400
      */
-    public function createBook(array $book): int
+    public function createBook(array $book): Result
     {
         $bookDto = $this->bookDtoFactory->create($book);
-        return $this->bookRepository->createBook($bookDto);
+        $ret = $this->bookRepository->createBook($bookDto);
+        return $this->response->setResultObject(new Result())->setStatus(Response::CREATED)->send($ret);
+
     }
 
     /**
@@ -45,7 +47,7 @@ class BookController
      * The resource is at the root of the application
      * ids[]=1&ids[]=2&ids[]=3
      */
-    public function getBooks(array $ids)
+    public function getBooks(array $ids): Result
     {
         try {
             if (empty($ids)) {
@@ -71,7 +73,7 @@ class BookController
      * @param array $ids
      * @return Result
      */
-    public function deleteBooks(array $ids)
+    public function deleteBooks(array $ids): Result
     {
         try {
             if (empty($ids)) {
