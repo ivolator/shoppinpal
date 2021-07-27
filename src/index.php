@@ -3,7 +3,7 @@ ini_set('display_errors', 'On');
 error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
 use bookstore\controllers\BookController;
-use bookstore\controllers\Result;
+use bookstore\dto\Result;
 use bookstore\controllers\Router;
 use bookstore\repository\BookDataAccess;
 use bookstore\repository\BookRepository;

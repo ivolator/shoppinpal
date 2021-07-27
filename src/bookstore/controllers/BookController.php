@@ -3,6 +3,7 @@
 
 namespace bookstore\controllers;
 
+use bookstore\dto\Result;
 use bookstore\exceptions\Exception400;
 use bookstore\exceptions\Exception500;
 use bookstore\repository\BookRepository;
@@ -21,7 +22,7 @@ class BookController
 
     public function __construct(BookRepository $bookRepository, Response $response)
     {
-        $this->response = $response?:(new Response());
+        $this->response = $response ?: (new Response());
         $this->bookRepository = $bookRepository;
     }
 
@@ -33,7 +34,7 @@ class BookController
     public function getBooks(array $ids)
     {
         try {
-            if (empty($ids)){
+            if (empty($ids)) {
                 throw new Exception400('No ids were provided');
             }
             $books = $this->bookRepository->findBooksByIds($ids);
@@ -56,9 +57,10 @@ class BookController
      * @param array $ids
      * @return Result
      */
-    public function deleteBooks(array $ids){
+    public function deleteBooks(array $ids)
+    {
         try {
-            if (empty($ids)){
+            if (empty($ids)) {
                 throw new Exception400('No ids were provided');
             }
             $books = $this->bookRepository->deleteBookById($ids);

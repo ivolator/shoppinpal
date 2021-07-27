@@ -3,6 +3,7 @@
 namespace bookstore\controllers;
 
 use bookstore\dto\BookDto;
+use bookstore\dto\Result;
 use bookstore\exceptions\Exception400;
 use bookstore\repository\BookRepository;
 use bookstore\services\Response;
@@ -37,7 +38,7 @@ class BookControllerTest extends TestCase
     /**
      *
      */
-    public function testThrowsExceptionAndSetsErrors()
+    public function testThrowsExceptionAndCallsShutdown()
     {
         $this->bookRepository->expects(self::once())->method('findBooksByIds')->willReturn([]);
         $this->response->expects(self::never())->method('send');
@@ -60,7 +61,7 @@ class BookControllerTest extends TestCase
         $this->assertTrue($data->getData());
     }
 
-    public function testДелетеThrowsExceptionAndCallsShutdown()
+    public function tesDeleteThrowsExceptionAndCallsShutdown()
     {
         $this->bookRepository->expects(self::any())->method('deleteBookById')->willReturn([]);
         $this->response->expects(self::never())->method('send');

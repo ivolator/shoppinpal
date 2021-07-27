@@ -2,7 +2,7 @@
 
 namespace bookstore\services;
 
-use bookstore\controllers\Result;
+use bookstore\dto\Result;
 use Exception;
 
 /**
@@ -122,26 +122,6 @@ class Response
     protected Result $resultObject;
 
     /**
-     *
-     * @return Result $reultObject
-     */
-    public function getResultObject()
-    {
-        return $this->resultObject;
-    }
-
-    /**
-     *
-     * @param Result $result
-     * @return Response
-     */
-    public function setResultObject(Result $result): Response
-    {
-        $this->resultObject = $result;
-        return $this;
-    }
-
-    /**
      * (non-PHPdoc)
      *
      * @see \restlt\ResponseInterface::send()
@@ -200,6 +180,26 @@ class Response
                 header($hStr, true, $this->status);
             }
         }
+    }
+
+    /**
+     *
+     * @return Result $reultObject
+     */
+    public function getResultObject()
+    {
+        return $this->resultObject;
+    }
+
+    /**
+     *
+     * @param Result $result
+     * @return Response
+     */
+    public function setResultObject(Result $result): Response
+    {
+        $this->resultObject = $result;
+        return $this;
     }
 
     /**

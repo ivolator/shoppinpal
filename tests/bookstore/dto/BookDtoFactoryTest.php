@@ -36,13 +36,13 @@ class BookDtoFactoryTest extends TestCase
     public function testCreateFailForEach($book, $expectedExceptionMessage)
     {
         try {
-            $dto = (new BookDtoFactory())->create($book);
-            $this->assertEquals($book['id'], $dto->getId());
+            (new BookDtoFactory())->create($book);
         } catch (Exception400 $e) {
             $this->assertEquals($expectedExceptionMessage, $e->getMessage());
         }
 
     }
+
 
     /**
      * @return \array[][]
@@ -52,7 +52,7 @@ class BookDtoFactoryTest extends TestCase
         return [
             [['title' => 'T1', 'releaseDate' => '2001-01-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Book ID can\'t be empty or 0'],//missing id
             [['id' => 1, 'releaseDate' => '2001-01-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Missing book Title name'],//missing title
-            [['id' => 1, 'title' => 'T1', 'releaseDate' => '20-01-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Invalid date format. Use MySQL format'],//wrong date
+            [['id' => 1, 'title' => 'T1', 'releaseDate' => '20-01', 'author' => 'A1', 'isbn' => 'Isbn1234'], 'Invalid date format. Use MySQL format'],//wrong date
             [['id' => 1, 'title' => 'T1', 'releaseDate' => '2001-01-01', 'isbn' => 'Isbn1234'], 'Missing book Author name'],//no author
             [['id' => 1, 'title' => 'T1', 'releaseDate' => '2001-01-01', 'author' => 'A1'], 'Missing ISBN value'],//no isbn
         ];

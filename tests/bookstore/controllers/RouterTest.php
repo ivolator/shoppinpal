@@ -3,6 +3,7 @@
 namespace bookstore\controllers;
 
 use bookstore\dto\BookDto;
+use bookstore\dto\Result;
 use bookstore\services\Request;
 use PHPUnit\Framework\TestCase;
 

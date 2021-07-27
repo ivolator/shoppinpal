@@ -1,11 +1,12 @@
 <?php
 
 
-namespace bookstore\controllers;
+namespace bookstore\dto;
 
 use JsonSerializable;
 
 /**
+ * Just a DTO
  * Class Result
  * @package bookstore\controllers
  */

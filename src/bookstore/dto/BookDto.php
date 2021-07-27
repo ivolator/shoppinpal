@@ -2,7 +2,6 @@
 
 namespace bookstore\dto;
 
-use bookstore\exceptions\Exception400;
 use JsonSerializable;
 
 /**
@@ -15,29 +14,29 @@ class BookDto implements JsonSerializable
      * Book Id
      * @var int
      */
-    protected int $id;
+    protected int $id = 0;
 
     /**
      * Author name from the Author model
      * @var string
      */
-    protected string $author;
+    protected string $author = '';
 
     /**
      * Book title
      * @var string
      */
-    protected string $title;
+    protected string $title = '';
     /**
      * @var string Book isbn
      */
-    protected string $isbn;
+    protected string $isbn = '';
 
     /**
      * Book release date
      * @var string
      */
-    protected string $releaseDate;
+    protected string $releaseDate = '';
 
     /**
      * @return string
@@ -49,13 +48,12 @@ class BookDto implements JsonSerializable
 
     /**
      * @param int $id
+     * @return $this
      */
-    public function setId(int $id): void
+    public function setId(int $id): self
     {
-        if (empty($id)) {
-            throw new Exception400("Book ID can't be empty or 0");
-        }
         $this->id = $id;
+        return $this;
     }
 
     /**
@@ -68,14 +66,12 @@ class BookDto implements JsonSerializable
 
     /**
      * @param string $author
-     * @throws Exception400
+     * @return $this
      */
-    public function setAuthor(string $author): void
+    public function setAuthor(string $author): self
     {
-        if (empty($author) or strlen($author) === 0) {
-            throw new Exception400("Missing book Author name");
-        }
         $this->author = $author;
+        return $this;
     }
 
     /**
@@ -88,14 +84,13 @@ class BookDto implements JsonSerializable
 
     /**
      * @param string $title
-     * @throws Exception400
+     * @return $this
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title): self
     {
-        if (empty($title) or strlen($title) === 0) {
-            throw new Exception400("Missing book Title name");
-        }
+
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -108,14 +103,12 @@ class BookDto implements JsonSerializable
 
     /**
      * @param string $isbn
-     * @throws Exception400
+     * @return $this
      */
-    public function setIsbn(string $isbn): void
+    public function setIsbn(string $isbn): self
     {
-        if (empty($isbn) or strlen($isbn) == 0) {
-            throw new Exception400("Missing ISBN value");
-        }
         $this->isbn = $isbn;
+        return $this;
     }
 
     /**
@@ -128,19 +121,12 @@ class BookDto implements JsonSerializable
 
     /**
      * @param string $releaseDate
-     * @throws Exception400
+     * @return $this
      */
-    public function setReleaseDate(string $releaseDate): void
+    public function setReleaseDate(string $releaseDate): self
     {
-        if(empty($releaseDate)){
-           return;
-        }
-        $match = preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}/', $releaseDate, $matches);
-        if ($match > 0) {
-            $this->releaseDate = $releaseDate;
-        } else {
-            throw new Exception400("Invalid date format. Use MySQL format");
-        }
+        $this->releaseDate = $releaseDate;
+        return $this;
     }
 
     /**
