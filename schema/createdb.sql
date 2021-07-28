@@ -1,1 +1,1 @@
-CREATE database if NOT EXISTS bookstore;
+CREATE database IF NOT EXISTS bookstore;
