@@ -79,8 +79,8 @@ class BookController
             if (empty($ids)) {
                 throw new Exception400('No ids were provided');
             }
-            $books = $this->bookRepository->deleteBookById($ids);
-            $data = (new Response())->setResultObject(new Result())->send($books);
+            $bool = $this->bookRepository->deleteBookById($ids);
+            $data = (new Response())->setResultObject((new Result())->setHttpStatus(Response::NOCONTENT))->send($bool);
             return $data;
         } catch (Exception400 $e400) {
             return (new Response())->setResultObject(new Result())->shutdown($e400);
