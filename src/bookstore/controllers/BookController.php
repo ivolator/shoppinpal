@@ -90,6 +90,24 @@ class BookController
     }
 
     /**
+     * @param int $bookId
+     * @param array $bookDto
+     * @return Result
+     */
+    public function updateBook(int $bookId, array $bookDto)
+    {
+        try {
+            $bool = $this->bookRepository->updateBook($bookId, $bookDto);
+            return (new Response())->setResultObject((new Result())->setHttpStatus(Response::OK))->send($bool);
+        } catch (Exception400 $e400) {
+            return (new Response())->setResultObject(new Result())->shutdown($e400);
+        } catch (Exception500 | Exception $e500) {
+            return (new Response())->setResultObject(new Result())->shutdown($e500);
+        }
+    }
+
+
+    /**
      * @return BookRepository
      */
     public function getBookRepository(): BookRepository

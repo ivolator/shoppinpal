@@ -28,14 +28,6 @@ class BookDataAccess
     }
 
     /**
-     * @return PDO
-     */
-    public function getConnection(): PDO
-    {
-        return $this->connection;
-    }
-
-    /**
      * @param array $book
      * @return array
      * @throws Exception500
@@ -48,7 +40,7 @@ class BookDataAccess
             return $books;
         }
 
-        $author_id = $this->createAuthor($book['author']??'');
+        $author_id = $this->createAuthor($book['author'] ?? '');
 
         $args[] = $author_id ?? null;
         $args[] = $book['title'] ?? null;
@@ -68,7 +60,7 @@ class BookDataAccess
         } catch (Throwable $t) {
             throw new Exception500('The book was not created', Response::INTERNALSERVERERROR);
         }
-        return  [];
+        return [];
     }
 
     /**
@@ -125,6 +117,14 @@ class BookDataAccess
     }
 
     /**
+     * @return PDO
+     */
+    public function getConnection(): PDO
+    {
+        return $this->connection;
+    }
+
+    /**
      * Fetch list of books by ids
      * Returnns an associative array of arrays
      * @param array $ids
@@ -164,8 +164,47 @@ class BookDataAccess
             $stm->execute($ids);
             return $stm->rowCount();
         }
-
         return 0;
     }
 
+    /**
+     * @param $id
+     * @param $bookDto
+     * @return bool
+     */
+    public function updateBook($id, $bookDto): bool
+    {
+        if ($bookDto[$id] ?? null) { //make sure we don't update the id
+            unset($bookDto['id']);
+        }
+
+        $prepArray = array_combine(array_keys($bookDto), array_keys($bookDto));
+        if ($prepArray['author'] ?? false) {
+            $prepArray['authors.name'] = 'author';
+            unset($prepArray['author']);
+        }
+        if ($prepArray['releaseDate'] ?? false) {
+            $prepArray['release_date'] = 'releaseDate';
+            unset($prepArray['releaseDate']);
+        }
+        $setSql = '';
+        foreach ($prepArray as $k => $v) {
+            $setSql .= $k . '=:' . $v . ',';
+        }
+        $setSql = rtrim($setSql, ',');
+        $bookDto['id'] = $id;
+
+        $keysPrep = '';
+        //get ready for prepared stmt
+        $sql = 'UPDATE books LEFT JOIN authors ON books.author_id = authors.id ';
+        $sql .= 'SET ' . $setSql;
+        $sql .= ' WHERE books.id=:id';
+        $stm = $this->connection->prepare($sql);
+
+        if (!empty($stm)) {
+            $stm->execute($bookDto);
+            return (bool)$stm->rowCount();
+        }
+        return false;
+    }
 }

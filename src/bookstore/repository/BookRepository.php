@@ -70,6 +70,16 @@ class BookRepository
     }
 
     /**
+     * @param $id
+     * @param $bookDto
+     * @return bool
+     */
+    public function updateBook(int $id, array $bookDto): bool
+    {
+        return $this->dataAccess->updateBook($id, $bookDto);
+    }
+
+    /**
      * Delete multiple books
      * Needs max limit on ids passed!
      * @param array $ids
