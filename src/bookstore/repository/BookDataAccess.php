@@ -174,10 +174,14 @@ class BookDataAccess
      */
     public function updateBook($id, $bookDto): bool
     {
+        if (empty($id) || empty($bookDto)) {
+            return false;
+        }
         if ($bookDto[$id] ?? null) { //make sure we don't update the id
             unset($bookDto['id']);
         }
 
+        // cook up the args
         $prepArray = array_combine(array_keys($bookDto), array_keys($bookDto));
         if ($prepArray['author'] ?? false) {
             $prepArray['authors.name'] = 'author';
@@ -195,8 +199,10 @@ class BookDataAccess
         $bookDto['id'] = $id;
 
         $keysPrep = '';
-        //get ready for prepared stmt
         $sql = 'UPDATE books LEFT JOIN authors ON books.author_id = authors.id ';
+        if (empty($prepArray['authors.name'])) { //no join if author is not passed
+            $sql = 'UPDATE books ';
+        }
         $sql .= 'SET ' . $setSql;
         $sql .= ' WHERE books.id=:id';
         $stm = $this->connection->prepare($sql);

@@ -109,4 +109,51 @@ class BookDataAccessTest extends TestCase
         $da = new BookDataAccess($this->connection);
         $this->assertEmpty($da->deleteById([]));
     }
+
+    /**
+     * Assert SQL is correct and args built correctly
+     */
+    public function testUpdateBookHappyPath()
+    {
+        $sql = 'UPDATE books LEFT JOIN authors ON books.author_id = authors.id ';
+        $sql .= 'SET title=:title,isbn=:isbn,authors.name=:author,release_date=:releaseDate WHERE books.id=:id';
+
+        $this->pdo->expects(self::once())->method('prepare')->with($sql)->willReturn($this->pdoStatement);
+        $this->pdoStatement->expects(self::once())->method('execute');
+        $this->pdoStatement->expects(self::once())->method('rowCount')->willReturn(1);
+
+        $da = new BookDataAccess($this->connection);
+        $dto = ["title" => "Ware and Peace", "author" => "T Boy 23", "isbn" => "43092", "releaseDate" => "2000-01-01"];
+        $da->updateBook(1, $dto);
+
+    }
+
+    /**
+     * Assert SQL is correct and args built correctly when no author
+     */
+    public function testUpdateBookHappyNoAuthor()
+    {
+        $sql = 'UPDATE books ';
+        $sql .= 'SET title=:title,isbn=:isbn,release_date=:releaseDate WHERE books.id=:id';
+        $this->pdo->expects(self::once())->method('prepare')->with($sql)->willReturn($this->pdoStatement);
+        $this->pdoStatement->expects(self::once())->method('execute');
+        $this->pdoStatement->expects(self::once())->method('rowCount')->willReturn(1);
+
+        $da = new BookDataAccess($this->connection);
+        $dto = ["title" => "Ware and Peace", "isbn" => "43092", "releaseDate" => "2000-01-01"];
+        $da->updateBook(1, $dto);
+
+    }
+
+    /**
+     * Assert no data passed
+     */
+    public function testNoData()
+    {
+        $da = new BookDataAccess($this->connection);
+        //check no data
+        $this->assertFalse($da->updateBook(1, []));
+        //check no id
+        $this->assertFalse($da->updateBook(null, []));
+    }
 }
