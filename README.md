@@ -20,7 +20,14 @@ URI /books
 
 3. Delete a book :
 - URI /books/{id}
-- Method:  DELETE
+- Method:  POST (DELETE)
 - Headers:  Content-Type: application/json; HTTP-X-HTTP-METHOD-OVERRIDE: DELETE
 - Response: HTTP 204  plus errors if any 
+-  ["httpStatus": 200, data: true,"errors": []]
+
+4. Update book :
+- URI /books/{id}
+- Method POST (PATCH)
+- Payload: {"title":"Book Title","author":"Author Name","isbn":"ISBN-123355","releaseDate":"2000-01-01"}
+- Headers:  Content-Type: application/json; HTTP-X-HTTP-METHOD-OVERRIDE: PATCH
 -  ["httpStatus": 200, data: true,"errors": []]
