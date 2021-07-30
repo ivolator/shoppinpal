@@ -198,7 +198,6 @@ class BookDataAccess
         $setSql = rtrim($setSql, ',');
         $bookDto['id'] = $id;
 
-        $keysPrep = '';
         $sql = 'UPDATE books LEFT JOIN authors ON books.author_id = authors.id ';
         if (empty($prepArray['authors.name'])) { //no join if author is not passed
             $sql = 'UPDATE books ';
@@ -206,7 +205,6 @@ class BookDataAccess
         $sql .= 'SET ' . $setSql;
         $sql .= ' WHERE books.id=:id';
         $stm = $this->connection->prepare($sql);
-
         if (!empty($stm)) {
             $stm->execute($bookDto);
             return (bool)$stm->rowCount();
